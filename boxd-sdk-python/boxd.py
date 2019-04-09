@@ -4,6 +4,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import grpc
+import json
+import os
 
 import proto.block_pb2 as block
 
@@ -21,10 +23,17 @@ import proto.faucet_pb2_grpc as faucet_rpc
 
 from hash import bytes_to_hex
 from hash import hex_to_bytes
-from pc import get_pub_key_hash
-from client import calc_tx_hash_for_sig
 from hash import bin_double_sha256
-from pc import sign, get_pub_key
+from signutils import get_pub_key_hash
+from signutils import calc_tx_hash_for_sig
+from signutils import sign, get_pub_key
+
+from keystore import dumpprivkey as dump_priv_key
+from keystore import dumpkeystore as dump_key_store
+from keystore import get_addr
+from keystore import get_pub_key as kgpk
+from keystore import newaccount
+
 
 class Boxd(object):
     '''
@@ -333,7 +342,9 @@ class Boxd(object):
             to_value += v
 
             pkh = get_pub_key_hash(k)
-            pkbb = [ord(x) for x in pkh]
+            #pkbb = [ord(x) for x in pkh]
+            print (type(pkh))
+            pkbb = [x for x in pkh]
 
             oc = Opcode()
             oc.add_opcode(oc.OPDUP)
@@ -355,7 +366,8 @@ class Boxd(object):
             oc.add_opcode(oc.OPHASH160)
 
             pkh = get_pub_key_hash(k)
-            pkbb = [ord(x) for x in pkh]
+            #pkbb = [ord(x) for x in pkh]
+            pkbb = [x for x in pkh]
 
             oc.add_operand(pkbb)
             oc.add_opcode(Opcode.OPEQUALVERIFY)
@@ -389,14 +401,16 @@ class Boxd(object):
             # sign
             sig_bytes_hex = sign(priv_key_hex, bytes_to_hex(sigHash))
 
-            sbs = [ord(item) for item in sig_bytes_hex]
+            #sbs = [ord(item) for item in sig_bytes_hex]
+            sbs = [item for item in sig_bytes_hex]
 
             from op_code import Opcode
             oc = Opcode()
             oc.reset()
             oc.add_operand(sbs)
             pk = get_pub_key(priv_key_hex)
-            pkbs = [ord(item) for item in pk]
+            #pkbs = [ord(item) for item in pk]
+            pkbs = [item for item in pk]
             oc.add_operand(pkbs)
             script_sig_signed = oc.get_result()
             oc.reset()
@@ -405,16 +419,111 @@ class Boxd(object):
         return tx
 
 
-    def create_account(self, path, passphrase):
-        pass
+    def newaccount(self, password, path):
+        '''
+        Create new account
+
+        :param password:
+        :param path:
+        :return:
+        '''
+
+        if path is None:
+            raise  ValueError("KeyStore file path input err")
+
+        if os.path.isdir(path):
+            raise ValueError("Path can't be dir")
+
+        if os.path.exists(path):
+            raise valueError("Path already exists")
+
+        key_store_json = newaccount(password)
+        with open(path, 'w') as outfile:
+            json.dump(key_store_json, outfile)
+        return True
+
+    def dumpkeystore(self, priv_key, passphrase, path):
+        '''
+        Save keystore by private key and passphrase
+
+        :param priv_key:
+        :param passphrase:
+        :param path:
+        :return:
+        '''
+        if priv_key is None:
+            raise ValueError("Private key input err")
+
+        if passphrase is None:
+            raise  ValueError("Passphrase input err")
+
+        if path is None:
+            raise  ValueError("KeyStore file path input err")
+
+        if os.path.isdir(path):
+            raise ValueError("Path can't be dir")
+
+        if os.path.exists(path):
+            raise valueError("Path already exists")
+
+        key_store_json = dump_key_store(passphrase, priv_key)
+        with open(path, 'w') as outfile:
+            json.dump(key_store_json, outfile)
+        return True
 
 
-    def load_keystore(self, path, passphrase):
-        pass
+    def privkey_to_pubkey(self, priv_key):
+        '''
+        Export public key from private key
+
+        :param priv_key:
+        :return:  pubkey array
+        '''
+        return kgpk(priv_key)
+
+
+    def privkey_to_addr(self, priv_key):
+        '''
+        Export boxd address from private key
+
+        :param priv_key:
+        :return:
+        '''
+        return get_addr(kgpk(priv_key)).decode()
+
+    def pubkey_to_addr(self, pub_key):
+        '''
+        Export boxd address from public key
+
+        :param pub_key:
+        :return:
+        '''
+        return get_addr(pub_key).decode()
+
+
+    def dumpprivkey(self, path, passphrase):
+        '''
+        Export private key from keystore and passphrase
+
+        :param path:
+        :param passphrase:
+        :return:
+        '''
+        def load_keyfile(path_or_file_obj):
+            try:
+                with open(path_or_file_obj) as keyfile_file:
+                    return json.load(keyfile_file)
+            except:
+                raise IOError("Keystore input error")
+
+        keyfile_json = load_keyfile(path)
+        return dump_priv_key(keyfile_json, passphrase)
+
 
 
 if __name__ == "__main__":
-
+    priv_key_hex = "757c3f66fbec09e21c41be72e1e8d1159ee4b0f750ad55f5652db56c0897fdb5"
+    path = "/Users/apple/.box_keystore/b1jeRgomNV8UE57SStuxXTS66PJV58FUjXJ.keystore"
 
     to = {}
     to["b1Tvej4G8Lma86pgYpWqv4fUFJcEyDdeGst"] = 100
@@ -429,25 +538,8 @@ if __name__ == "__main__":
     fee = 100
 
     boxd = Boxd("39.105.214.10", 19161)
-    utxo_resp = boxd.fetch_utxos(_from, amount, None, 0)
-    utxos = utxo_resp.utxos
-    if len(utxos) < 1:
-        import sys
-        print ("bad utxo")
-        sys.exit(0)
+    print (boxd.privkey_to_pubkey(priv_key_hex))
+    print (boxd.privkey_to_addr(priv_key_hex))
+    print (boxd.pubkey_to_addr(boxd.privkey_to_pubkey(priv_key_hex)))
 
-
-    unsigned_tx = boxd.create_unsigned_transaction(_from, utxos, to, fee)
-    print (type(unsigned_tx))
-    print (unsigned_tx)
-
-    signed_tx = boxd.sign_unsigned_transaction(unsigned_tx, priv_key_hex)
-    print (signed_tx)
-    print (type(signed_tx))
-
-    send_resp = boxd.send_transaction(signed_tx)
-    print (send_resp)
-    print (send_resp.hash)
-
-
-
+    boxd.newaccount("1", "/Users/apple/.box_keystore/111.keystore")

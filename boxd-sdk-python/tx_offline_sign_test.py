@@ -15,41 +15,27 @@ import proto.transaction_pb2_grpc as tx_rpc
 
 #channel = grpc.insecure_channel('localhost:19111')
 channel = grpc.insecure_channel('39.105.214.10:19161')
-print (channel)
 #channel = grpc.insecure_channel('39.97.169.1:19111')
 stub = tx_rpc.TransactionCommandStub(channel)
-
-
-# import binascii
-# def bytes_to_hex(b):
-#     return binascii.hexlify(bytearray(b))
-#
-# def hex_to_bytes(v):
-#     return  v.decode("hex")
-
-
-import codecs
-
 
 def remove_0x_prefix(value):
     if is_0x_prefixed(value):
         return value[2:]
     return value
 
-
 def is_0x_prefixed(value):
     return value.startswith("0x") or value.startswith("0X")
-
 
 # Type ignored for `codecs.decode()` due to lack of mypy support for 'hex' encoding
 # https://github.com/python/typeshed/issues/300
 def hex_to_bytes(value):
-    return codecs.decode(remove_0x_prefix(value), "hex")  # type: ignore
-
+    # return codecs.decode(remove_0x_prefix(value), "hex")  # type: ignore
+    return bytes.fromhex(value)
 
 def bytes_to_hex(value):
-    binary_hex = codecs.encode(value, "hex")  # type: ignore
-    return add_0x_prefix(binary_hex.decode("ascii"))
+    # binary_hex = codecs.encode(value, "hex")  # type: ignore
+    # return add_0x_prefix(binary_hex.decode("ascii"))
+    return  ''.join( [ "%02X" % x for x in value ] ).strip()
 
 
 
@@ -224,7 +210,7 @@ if __name__ == '__main__':
         # 46f7f67f515e7d053525459991c7a6b3e673950809af776324f46d91df9e600d
 
         print("\==============sign================")
-        from pc import sign, get_pub_key
+        from signutils import sign, get_pub_key
         priv_hex_str = "29fbf01166fc31c941cadc1659a5f684f81c22c1113e5aa5b0af28b7dd453269"
         # sign
         sig_bytes_hex = sign(priv_hex_str, bytes_to_hex(sigHash))
@@ -251,50 +237,10 @@ if __name__ == '__main__':
         oc.reset()
         print ("script sig:" + bytes_to_hex(script_sig_signed))
         vin.script_sig = hex_to_bytes(bytes_to_hex(script_sig_signed))
-        # 4630440220216fdf577fc913641453f5460a7cc5dfe36adb974134e64fd3db04d3aaaab49502200c4d7a280aa0b491ffee5323d1dd9aeeeaf8f2fb3917c156d6c91426ca3e28512103ac5906f34b6f12150d49942dcd3df4b30716cb78abc9e3f6e488e2c1f28ab8bd
-        # 4630440220216fdf577fc913641453f5460a7cc5dfe36adb974134e64fd3db04d3aaaab49502200c4d7a280aa0b491ffee5323d1dd9aeeeaf8f2fb3917c156d6c91426ca3e28512103ac5906f34b6f12150d49942dcd3df4b30716cb78abc9e3f6e488e2c1f28ab8bd
 
     print (unsigned_tx)
     ret = send(unsigned_tx) 
     print ("hash: " + ret)
-    print ("\n\n")
-
-
-    ########################################3
-    a_raw_msg_hex = "123f0a220a20206029513377e45fed5cf8486b76664864a8138d1cc5248c84202eab2c803b54121976a914816666b318349468f8146e76e4e3751d937c14cb88ac1a1e08c801121976a91407056d0500e1c102bdb382c1339ed6f75db5ccc788ac1a1d0864121976a914014b73fa24ba03acb300c64ed12c0c4ebc06c25288ac1a1e08ac02121976a91469bf8ba2e9462d830a021a4748abc8c2afaac90288ac1a1e089003121976a91413b9aa477777c51603a2d5efb620d49faed1bd5c88ac1a2408b4f7d9ecb3aacf3a121976a914816666b318349468f8146e76e4e3751d937c14cb88ac"
-    
-    from hash import bin_double_sha256
-    sig_hash_bytes = bin_double_sha256(a_raw_msg_hex.decode("hex"))
-    print ("sig hash:" + bytes_to_hex(sigHash))
-
-    priv_hex_str = "29fbf01166fc31c941cadc1659a5f684f81c22c1113e5aa5b0af28b7dd453269"
-    sig_bytes = sign(priv_hex_str, bytes_to_hex(sig_hash_bytes))
-    print (sig_bytes)
-    print(bytes_to_hex(sig_bytes))
-    sigbs = []
-    for item in sig_bytes:
-        sigbs.append(ord(item))
-
-
-    pk_bytes = get_pub_key(priv_hex_str) 
-    print (bytes_to_hex(pk_bytes))
-    print (type(pk_bytes))
-    pkbs = []
-    for item in pk_bytes:
-        pkbs.append(ord(item))
-    print (bytes_to_hex(pkbs))    
-
-    
-    from op_code import Opcode
-    oc = Opcode()
-    oc.add_operand(sigbs)
-    oc.add_operand(pkbs)
-    addrScripts = oc.get_result()
-    oc.reset()
-    print (type(addrScripts))
-    print (bytes_to_hex(addrScripts))
-    
-
 
 
 

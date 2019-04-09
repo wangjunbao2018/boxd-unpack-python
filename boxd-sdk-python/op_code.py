@@ -35,7 +35,6 @@ class Opcode(object):
 
     def add_operand(self, b):
         l = len(b)
-        print (type(b))
         tmp = self.get_data(l) + b
         self._r += tmp
 
@@ -60,33 +59,3 @@ class Opcode(object):
 
 if __name__ == "__main__":
     pass
-
-    #
-    # oc = Opcode()
-    # oc.add_opcode(0x76)
-    # oc.add_opcode(0xa9)
-    # #oc.add_operand()
-    # oc.add_opcode(0x88)
-    # oc.add_opcode(0xac)
-    # print(oc.get_result())
-    # oc.reset()
-    #
-    # from client import getPkh
-    # from client import bytes_to_hex
-    # addr ="b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq4m"
-    # pkh = getPkh(addr)
-    # print(type(pkh), bytes_to_hex(pkh))
-    # ar = []
-    # for item in pkh:
-    #     print (item,  ord(item))
-    #     ar.append(ord(item))
-    # print bytes_to_hex(ar)
-    #
-    #
-    # oc.add_opcode(0x76)
-    # oc.add_opcode(0xa9)
-    # oc.add_operand(ar)
-    # oc.add_opcode(0x88)
-    # oc.add_opcode(0xac)
-    # print(oc.get_result())
-    # print(bytes_to_hex(oc.get_result()))

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     to["b1dSx5FTXEpzB7hWZAydY5N4A5PtFJb57V1"] = 300
     to["b1Vc6vBWzjSp71c3c49hx3pENPL1TwU1Exy"] = 400
 
-    boxd = Boxd("localhost", 19111)
+    boxd = Boxd("39.105.214.10", 19161)
 
     # get_block_height
     height_resp = boxd.get_block_height()
@@ -73,5 +73,3 @@ if __name__ == "__main__":
     # get_fee_price
     fee_price = boxd.get_fee_price()
     print(fee_price)
-
-    #

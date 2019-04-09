@@ -1,5 +1,21 @@
+#!/bin/python
+
 from secp256k1 import PrivateKey
-import base58
+import binascii, hashlib, base58
+
+
+def format_ret(t):
+    ser = t.SerializeToString()
+    return ser
+
+def calc_tx_hash_for_sig(script_pub_key, tx, index):
+    for i in range(len(tx.vin)):
+        if i != index:
+            tx.vin[index].script_sig = None
+        else:
+            tx.vin[index].script_sig = script_pub_key
+    return   format_ret(tx)
+
 
 def get_pub_key_hash(addr):
     if len(addr) != 35 or not addr.startswith("b1"):
@@ -14,17 +30,6 @@ def get_pub_key(priv_hex):
     pub_key = privKey.pubkey
     return pub_key.serialize()
 
-from hashlib import new, sha256 as _sha256
-def double_sha256_checksum(bytestr):
-    return double_sha256(bytestr)[:4]
-def sha256(bytestr):
-    return _sha256(bytestr).digest()
-
-def double_sha256(bytestr):
-    return _sha256(_sha256(bytestr).digest()).digest()
-
-
-import binascii, hashlib, base58
 def ripemd160(x):
     d = hashlib.new('ripemd160')
     d.update(x)
@@ -44,12 +49,8 @@ def sign(priv_hex, msg_hex):
     sig_ser = privKey.ecdsa_serialize(sig_check)
     return sig_ser
 
-
 if __name__ == "__main__":
     priv_key_hex = "29fbf01166fc31c941cadc1659a5f684f81c22c1113e5aa5b0af28b7dd453269"
     pubkey = get_pub_key(priv_key_hex)
     addr = get_addr(pubkey)
     print (addr)
-    # b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq4m
-    # b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq4m
-    # b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq4m
