@@ -1,6 +1,7 @@
 #!/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 import grpc
 
@@ -327,7 +328,7 @@ class Boxd(object):
 
         # init vout
         to_value = 0
-        from opcode import Opcode
+        from op_code import Opcode
         for k, v in to.items():
             to_value += v
 
@@ -390,7 +391,7 @@ class Boxd(object):
 
             sbs = [ord(item) for item in sig_bytes_hex]
 
-            from opcode import Opcode
+            from op_code import Opcode
             oc = Opcode()
             oc.reset()
             oc.add_operand(sbs)
@@ -427,7 +428,7 @@ if __name__ == "__main__":
     amount = 1500
     fee = 100
 
-    boxd = Boxd("localhost", 19111)
+    boxd = Boxd("39.105.214.10", 19161)
     utxo_resp = boxd.fetch_utxos(_from, amount, None, 0)
     utxos = utxo_resp.utxos
     if len(utxos) < 1:
