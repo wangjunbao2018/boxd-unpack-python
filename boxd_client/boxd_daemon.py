@@ -4,11 +4,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 import threading
+import logging
 
 from .proto import web_pb2 as web
 
 class BoxdDaemon(threading.Thread):
-
 
     def __init__(self, box_client, handler):
         self._web_stub = box_client.web_stub
@@ -25,4 +25,5 @@ class BoxdDaemon(threading.Thread):
             for block in blocks:
                 handler(block)
         except:
+            logging.error("Read new block err")
             pass
