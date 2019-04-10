@@ -490,6 +490,8 @@ class Boxd(object):
         :param priv_key_hex:  private key in hex format
         :return:
         '''
+        if priv_key_hex is None:
+            raise ValueError("Private key input err")
 
         for i in range(len(tx.vin)):
             vin = tx.vin[i]
@@ -581,6 +583,9 @@ class Boxd(object):
         :param priv_key:
         :return:  pubkey array
         '''
+        if priv_key is None:
+            raise ValueError("Private key input err")
+
         return kgpk(priv_key)
 
 
@@ -591,6 +596,9 @@ class Boxd(object):
         :param priv_key:
         :return:
         '''
+        if priv_key is None:
+            raise ValueError("Private key input err")
+
         return get_addr(kgpk(priv_key)).decode()
 
     def pubkey_to_addr(self, pub_key):
