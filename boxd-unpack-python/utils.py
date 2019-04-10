@@ -1,4 +1,4 @@
-#!/bin/pyhton
+#!/usr/bin/env python3
 
 import base58
 

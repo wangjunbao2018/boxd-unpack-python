@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python3
 
 from secp256k1 import PrivateKey
 import binascii, hashlib, base58

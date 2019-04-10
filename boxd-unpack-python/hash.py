@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from hashlib import sha256
 from binascii import hexlify, unhexlify
 from utilitybelt import is_hex
