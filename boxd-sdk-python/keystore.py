@@ -1,12 +1,9 @@
 import hmac
-import json
 
 from Crypto import Random
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import scrypt
 from Crypto.Util import Counter
-
-from eth_keys import keys
 
 from eth_utils import (
     big_endian_to_int,

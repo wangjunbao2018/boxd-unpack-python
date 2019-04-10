@@ -4,7 +4,7 @@ import binary
 
 class Opcode(object):
     '''
-    op_code enum
+    op_code enum and operators
     '''
     
     OP0 = 0x00;         # 0

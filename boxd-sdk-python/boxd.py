@@ -34,6 +34,10 @@ from keystore import get_addr
 from keystore import get_pub_key as kgpk
 from keystore import newaccount
 
+from utils import is_list
+from utils import is_str
+from utils import is_number
+from utils import is_addr_valid as utils_is_addr_valid
 
 class Boxd(object):
     '''
@@ -58,6 +62,9 @@ class Boxd(object):
         :param hash:
         :return:
         '''
+        if not is_str(hash):
+            raise ValueError("Hash input error")
+
         return self.control_stub.GetBlock(control.GetBlockRequest(block_hash = hash));
 
     def get_block_hash(self, height):
@@ -67,6 +74,9 @@ class Boxd(object):
         :param height:
         :return:
         '''
+        if not is_number(height):
+            raise ValueError("Height input error")
+
         return self.control_stub.GetBlockHash(control.GetBlockHashRequest(height= height))
 
     def get_block_height(self):
@@ -84,15 +94,19 @@ class Boxd(object):
         :param hash:
         :return:
         '''
+        if not is_str(hash):
+            raise ValueError("Hash input error")
+
         return self.control_stub.GetBlockHeader(control.GetBlockRequest(block_hash = hash))
 
     def set_debug_level(self, level):
         '''
-
-
-        :param level:
+        :param level:  debug|info|warning|error|fatal.
         :return:
         '''
+        if level not in ["debug", "info", "warning", "error", "fatal"]:
+            raise ValueError("Level input error, level can only be one of [debug|info|warning|error|fatal]")
+
         return self.control_stub.SetDebugLevel(control.DebugLevelRequest(level = level))
 
     def update_network_id(self, id):
@@ -141,6 +155,15 @@ class Boxd(object):
         :param amount:
         :return:
         '''
+        if not self.is_valid_addr(addr):
+            raise ValueError("Not a valid addr")
+
+        if not is_number(amount):
+            raise ValueError("Amount must be a number")
+
+        if  amount <= 0:
+            raise ValueError("Amount should > 0")
+
         return self.faucet_stub.Claim(faucet.ClaimReq(addr = addr, amount = amount))
 
 
@@ -155,6 +178,9 @@ class Boxd(object):
         :param spread_split:
         :return:
         '''
+        if not is_str(hash):
+            raise ValueError("Hash param error")
+
         return self.web_stub.ViewTxDetail(web.ViewTxDetailReq(hash = hash, spread_split = spread_split))
 
     def view_block_detail(self, hash):
@@ -164,6 +190,9 @@ class Boxd(object):
         :param hash:
         :return:
         '''
+        if not is_str(hash):
+            raise ValueError("Hash param error")
+
         return self.web_stub.ViewBlockDetail(web.ViewBlockDetailReq(hash = hash))
 
     #################################################################
@@ -176,6 +205,13 @@ class Boxd(object):
         :param addrs:
         :return:
         '''
+        if not is_list(addrs):
+            raise ValueError("Addrs input is not a list")
+
+        for addr in addrs:
+            if not self.is_valid_addr(addr):
+                raise ValueError("Not a valid addr")
+
         return self.tx_stub.GetBalance(tx.GetBalanceReq(addrs = addrs))
 
     def get_token_balance(self, addrs, token_hash, token_index):
@@ -187,6 +223,13 @@ class Boxd(object):
         :param token_index:
         :return:
         '''
+        if not is_list(addrs):
+            raise ValueError("Addrs input is not a list")
+
+        for addr in addrs:
+            if not self.is_valid_addr(addr):
+                raise ValueError("Not a valid addr")
+
         return self.tx_stub.GetTokenBalance(tx.GetTokenBalanceReq(addrs = addrs, token_hash = token_hash, token_index = token_index))
 
     def fetch_utxos(self, addr, amount, token_hash, token_index):
@@ -199,6 +242,15 @@ class Boxd(object):
         :param token_index:
         :return:
         '''
+        if not self.is_valid_addr(addr):
+            raise ValueError("Not a valid addr")
+
+        if not is_number(amount):
+            raise ValueError("Amount must be a number")
+
+        if  amount <= 0:
+            raise ValueError("Amount should > 0")
+
         return self.tx_stub.FetchUtxos(tx.FetchUtxosReq(addr = addr, amount = amount, token_hash = token_hash, token_index = token_index))
 
     def send_transaction(self, _tx):
@@ -218,6 +270,9 @@ class Boxd(object):
         :param hash:
         :return:
         '''
+        if not is_str(hash):
+            raise ValueError("Hash param error")
+
         return self.tx_stub.GetRawTransaction(tx.GetRawTransactionRequest(hash = hash))
 
     def get_fee_price(self):
@@ -236,6 +291,18 @@ class Boxd(object):
         :param fee:
         :return:
         '''
+        if not self.is_valid_addr(_from):
+            raise ValueError("Not a valid addr of from")
+
+        if not self.is_valid_addr(to):
+            raise ValueError("Not a valid addr of to")
+
+        if not is_number(fee):
+            raise ValueError("fee must be a number")
+
+        if fee < 0 :
+            raise ValueError("fee must >= 0")
+
         req = tx.MakeTxReq()
         to_addrs = []
         amounts = []
@@ -257,6 +324,15 @@ class Boxd(object):
         :param fee:
         :return:
         '''
+        if not self.is_valid_addr(_from):
+            raise ValueError("Not a valid addr of from")
+
+        if not is_number(fee):
+            raise ValueError("fee must be a number")
+
+        if fee < 0 :
+            raise ValueError("fee must >= 0")
+
         req = tx.MakeSplitAddrTxReq()
         setattr(req, 'from', _from)
         setattr(req, 'fee', fee)
@@ -298,6 +374,19 @@ class Boxd(object):
         :param fee:
         :return:
         '''
+        if not self.is_valid_addr(_from):
+            raise ValueError("Not a valid addr of from")
+
+        if not self.is_valid_addr(to):
+            raise ValueError("Not a valid addr of to")
+
+        if not is_number(fee):
+            raise ValueError("fee must be a number")
+
+        if fee < 0 :
+            raise ValueError("fee must >= 0")
+
+
         to_addrs = []
         amounts = []
         for k, v in to.items():
@@ -326,6 +415,19 @@ class Boxd(object):
         :param fee:
         :return:
         '''
+        if not self.is_valid_addr(_from):
+            raise ValueError("Not a valid addr of from")
+
+        if not self.is_valid_addr(to):
+            raise ValueError("Not a valid addr of to")
+
+        if not is_number(fee):
+            raise ValueError("fee must be a number")
+
+        if fee < 0 :
+            raise ValueError("fee must >= 0")
+
+
         _u_tx = block.Transaction()
 
         # init vin
@@ -435,7 +537,7 @@ class Boxd(object):
             raise ValueError("Path can't be dir")
 
         if os.path.exists(path):
-            raise valueError("Path already exists")
+            raise ValueError("Path already exists")
 
         key_store_json = newaccount(password)
         with open(path, 'w') as outfile:
@@ -464,7 +566,7 @@ class Boxd(object):
             raise ValueError("Path can't be dir")
 
         if os.path.exists(path):
-            raise valueError("Path already exists")
+            raise ValueError("Path already exists")
 
         key_store_json = dump_key_store(passphrase, priv_key)
         with open(path, 'w') as outfile:
@@ -509,6 +611,18 @@ class Boxd(object):
         :param passphrase:
         :return:
         '''
+        if passphrase is None or passphrase == "":
+            raise ValueError("Passphrase is empty")
+
+        if path is None:
+            raise  ValueError("KeyStore file path input err")
+
+        if os.path.isdir(path):
+            raise ValueError("Path can't be dir")
+
+        if not os.path.exists(path):
+            raise ValueError("Path doesn't exists")
+
         def load_keyfile(path_or_file_obj):
             try:
                 with open(path_or_file_obj) as keyfile_file:
@@ -518,6 +632,18 @@ class Boxd(object):
 
         keyfile_json = load_keyfile(path)
         return dump_priv_key(keyfile_json, passphrase)
+
+    def is_valid_addr(self, addr):
+        '''
+        Check the addr is vaild or not
+
+        :param addr:
+        :return:
+        '''
+        if addr is None:
+            raise ValueError("Address is empty")
+
+        return utils_is_addr_valid(addr)
 
 
 
@@ -542,4 +668,4 @@ if __name__ == "__main__":
     print (boxd.privkey_to_addr(priv_key_hex))
     print (boxd.pubkey_to_addr(boxd.privkey_to_pubkey(priv_key_hex)))
 
-    boxd.newaccount("1", "/Users/apple/.box_keystore/111.keystore")
+    boxd.newaccount("1", "/Users/apple/.box_keystore/222.keystore")
