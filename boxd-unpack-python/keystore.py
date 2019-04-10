@@ -97,8 +97,6 @@ def dumpkeystore(password, priv_key):
         "version":"0.1.0"
     }
 
-
-
 def dumpprivkey(keyfile_json, password):
     crypto = keyfile_json['crypto']
     derived_key = _derive_scrypt_key(crypto, password)
@@ -141,7 +139,6 @@ def _derive_scrypt_key(crypto, password):
     )
     return derived_scrypt_key
 
-
 def _scrypt_hash(password, salt, n, r, p, buflen):
     derived_key = scrypt(
         password,
@@ -154,41 +151,13 @@ def _scrypt_hash(password, salt, n, r, p, buflen):
     )
     return derived_key
 
-#
-# Encryption and Decryption
-#
 def decrypt_aes_ctr(ciphertext, key, iv):
     ctr = Counter.new(128, initial_value=iv, allow_wraparound=True)
     encryptor = AES.new(key, AES.MODE_CTR, counter=ctr)
     return encryptor.decrypt(ciphertext)
-
 
 def encrypt_aes_ctr(value, key, iv):
     ctr = Counter.new(128, initial_value=iv, allow_wraparound=True)
     encryptor = AES.new(key, AES.MODE_CTR, counter=ctr)
     ciphertext = encryptor.encrypt(value)
     return ciphertext
-
-
-import os
-if __name__ == "__main__":
-
-    private_key = binascii.hexlify(os.urandom(32)).decode()
-    print (type(private_key))
-    priv_key_hex = private_key
-    print (priv_key_hex)
-    password = "1"
-    ret = dumpkeystore(password, priv_key_hex)
-    print (ret)
-    priv_key = dumpprivkey(ret, password)
-    print (priv_key)
-    print (remove_0x_prefix(priv_key))
-
-    pubkey = get_pub_key(priv_key_hex)
-    print (pubkey)
-
-    addr  = get_addr(get_pub_key(priv_key_hex))
-    print (addr.decode())
-
-
-

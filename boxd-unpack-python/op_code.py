@@ -55,7 +55,3 @@ class Opcode(object):
         else:
             b = binary.put_uint32(l)
             return [self.OPPUSHDATA4, b[0], b[1], b[2], b[3], b[4]]
-
-
-if __name__ == "__main__":
-    pass

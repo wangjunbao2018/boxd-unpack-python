@@ -30,23 +30,3 @@ def is_list(value):
 def is_number(value):
     return isinstance(value, integer_types) and not isinstance(value, bool)
 
-
-if __name__ == "__main__":
-
-    a = "238u9jdjfjfd99e94*"
-    print (is_str(a))
-
-    b = [1]
-    print (is_list(b))
-    print (is_list(a))
-
-    c = 100
-    print (is_number(c))
-    d = True
-    print (is_number(d))
-
-    print ("" is None)
-
-    addr = "b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq41"
-    print (is_addr_valid(addr))
-

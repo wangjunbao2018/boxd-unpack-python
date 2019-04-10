@@ -48,9 +48,3 @@ def sign(priv_hex, msg_hex):
     sig_check = privKey.ecdsa_sign(bytes(bytearray.fromhex(msg_hex)), raw = True)
     sig_ser = privKey.ecdsa_serialize(sig_check)
     return sig_ser
-
-if __name__ == "__main__":
-    priv_key_hex = "29fbf01166fc31c941cadc1659a5f684f81c22c1113e5aa5b0af28b7dd453269"
-    pubkey = get_pub_key(priv_key_hex)
-    addr = get_addr(pubkey)
-    print (addr)

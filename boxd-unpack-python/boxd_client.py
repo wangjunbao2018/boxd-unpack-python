@@ -39,7 +39,7 @@ from utils import is_str
 from utils import is_number
 from utils import is_addr_valid as utils_is_addr_valid
 
-class Boxd(object):
+class BoxdClient(object):
     '''
     Boxd client wrapper
     '''
@@ -652,28 +652,3 @@ class Boxd(object):
             raise ValueError("Address is empty")
 
         return utils_is_addr_valid(addr)
-
-
-
-if __name__ == "__main__":
-    priv_key_hex = "757c3f66fbec09e21c41be72e1e8d1159ee4b0f750ad55f5652db56c0897fdb5"
-    path = "/Users/apple/.box_keystore/b1jeRgomNV8UE57SStuxXTS66PJV58FUjXJ.keystore"
-
-    to = {}
-    to["b1Tvej4G8Lma86pgYpWqv4fUFJcEyDdeGst"] = 100
-    to["b1USvtdkLrXXtzTfz8R5tpicJYobDbwuqeT"] = 200
-    to["b1dSx5FTXEpzB7hWZAydY5N4A5PtFJb57V1"] = 300
-    to["b1Vc6vBWzjSp71c3c49hx3pENPL1TwU1Exy"] = 400
-
-
-    _from = "b1fc1Vzz73WvBtzNQNbBSrxNCUC1Zrbnq4m"
-    priv_key_hex = "29fbf01166fc31c941cadc1659a5f684f81c22c1113e5aa5b0af28b7dd453269"
-    amount = 1500
-    fee = 100
-
-    boxd = Boxd("39.105.214.10", 19161)
-    print (boxd.privkey_to_pubkey(priv_key_hex))
-    print (boxd.privkey_to_addr(priv_key_hex))
-    print (boxd.pubkey_to_addr(boxd.privkey_to_pubkey(priv_key_hex)))
-
-    boxd.newaccount("1", "/Users/apple/.box_keystore/222.keystore")
