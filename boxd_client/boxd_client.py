@@ -7,37 +7,37 @@ import grpc
 import json
 import os
 
-import proto.block_pb2 as block
+from .proto import block_pb2 as block
 
-import proto.control_pb2 as control
-import proto.control_pb2_grpc as control_rpc
+from .proto import control_pb2 as control
+from .proto import control_pb2_grpc as control_rpc
 
-import proto.transaction_pb2 as tx
-import proto.transaction_pb2_grpc as tx_rpc
+from .proto import transaction_pb2 as tx
+from .proto import transaction_pb2_grpc as tx_rpc
 
-import proto.web_pb2 as web
-import proto.web_pb2_grpc as web_rpc
+from .proto import web_pb2 as web
+from .proto import web_pb2_grpc as web_rpc
 
-import proto.faucet_pb2 as faucet
-import proto.faucet_pb2_grpc as faucet_rpc
+from .proto import faucet_pb2 as faucet
+from .proto import faucet_pb2_grpc as faucet_rpc
 
-from hash import bytes_to_hex
-from hash import hex_to_bytes
-from hash import bin_double_sha256
-from signutils import get_pub_key_hash
-from signutils import calc_tx_hash_for_sig
-from signutils import sign, get_pub_key
+from .hash import bytes_to_hex
+from .hash import hex_to_bytes
+from .hash import bin_double_sha256
+from .signutils import get_pub_key_hash
+from .signutils import calc_tx_hash_for_sig
+from .signutils import sign, get_pub_key
 
-from keystore import dumpprivkey as dump_priv_key
-from keystore import dumpkeystore as dump_key_store
-from keystore import get_addr
-from keystore import get_pub_key as kgpk
-from keystore import newaccount
+from .keystore import dumpprivkey as dump_priv_key
+from .keystore import dumpkeystore as dump_key_store
+from .keystore import get_addr
+from .keystore import get_pub_key as kgpk
+from .keystore import newaccount
 
-from utils import is_list
-from utils import is_str
-from utils import is_number
-from utils import is_addr_valid as utils_is_addr_valid
+from .utils import is_list
+from .utils import is_str
+from .utils import is_number
+from .utils import is_addr_valid as utils_is_addr_valid
 
 class BoxdClient(object):
     '''

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from boxd import Boxd
+from boxd_client.boxd_client import BoxdClient
 
 if __name__ == "__main__":
 
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     to["b1dSx5FTXEpzB7hWZAydY5N4A5PtFJb57V1"] = 300
     to["b1Vc6vBWzjSp71c3c49hx3pENPL1TwU1Exy"] = 400
 
-    boxd = Boxd("39.105.214.10", 19161)
+    boxd = BoxdClient("39.105.214.10", 19161)
 
     # get_block_height
     height_resp = boxd.get_block_height()

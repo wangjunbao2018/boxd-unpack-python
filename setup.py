@@ -6,7 +6,7 @@ from setuptools import (
 )
 
 deps = {
-    'boxd-sdk-python': [
+    'boxd-client': [
         "eth-utils>=1.3.0,<2",
         "eth-keys>=0.2.1,<0.3.0",
         "pycryptodome>=3.6.6,<4",
@@ -39,17 +39,17 @@ deps = {
 }
 
 deps['dev'] = (
-    deps['boxd-sdk-python'] +
+    deps['boxd-client'] +
     deps['dev'] +
     deps['test'] +
     deps['lint']
 )
 
 
-install_requires = deps['boxd-sdk-python']
+install_requires = deps['boxd-client']
 
 setup(
-    name='boxd-sdk-python',
+    name='boxd-client',
     # *IMPORTANT*: Don't manually change the version here. Use the 'bumpversion' utility.
     version='0.0.1',
     description=(
@@ -61,13 +61,13 @@ setup(
     url='https://github.com/wangjunbao2018/boxd-sdk-python',
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
-    #install_requires=install_requires,
-    #extras_require=deps,
+    # install_requires=install_requires,
+    # extras_require=deps,
     setup_requires=['setuptools-markdown'],
-    py_modules=['boxd-sdk-python'],
+    py_modules=['boxd_client'],
     license="MIT",
     zip_safe=False,
-    keywords='boxd',
+    keywords='boxd-client',
     packages=find_packages(exclude=["tests", "tests.*"]),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
