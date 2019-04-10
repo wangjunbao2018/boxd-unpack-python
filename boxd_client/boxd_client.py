@@ -18,7 +18,7 @@ from .proto import transaction_pb2_grpc as tx_rpc
 from .proto import web_pb2 as web
 from .proto import web_pb2_grpc as web_rpc
 
-from .proto import faucet_pb2 as faucet
+from .proto import faucet_pb2 as _faucet
 from .proto import faucet_pb2_grpc as faucet_rpc
 
 from .hash import bytes_to_hex
@@ -164,7 +164,7 @@ class BoxdClient(object):
         if  amount <= 0:
             raise ValueError("Amount should > 0")
 
-        return self.faucet_stub.Claim(faucet.ClaimReq(addr = addr, amount = amount))
+        return self.faucet_stub.Claim(_faucet.ClaimReq(addr = addr, amount = amount))
 
 
     #################################################################

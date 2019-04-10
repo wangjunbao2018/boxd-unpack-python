@@ -62,7 +62,7 @@ setup(
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
     # install_requires=install_requires,
-    # extras_require=deps,
+    extras_require=deps,
     setup_requires=['setuptools-markdown'],
     py_modules=['boxd_client'],
     license="MIT",
@@ -75,7 +75,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.7',
     ],
 )

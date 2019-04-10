@@ -11,6 +11,12 @@ from .proto import web_pb2 as web
 class BoxdDaemon(threading.Thread):
 
     def __init__(self, box_client, handler):
+        '''
+        Boxd daemon class to listen and read new blocks
+
+        :param box_client:
+        :param handler:
+        '''
         self._web_stub = box_client.web_stub
         self._handler = handler
         threading.Thread.__init__(self)
