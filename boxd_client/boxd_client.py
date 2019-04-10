@@ -273,7 +273,8 @@ class BoxdClient(object):
         if not is_str(hash):
             raise ValueError("Hash param error")
 
-        return self.tx_stub.GetRawTransaction(tx.GetRawTransactionRequest(hash = hash))
+        #return self.tx_stub.GetRawTransaction(tx.GetRawTransactionRequest(hash = bytes.fromhex(hash)))
+        raise NotImplementedError
 
     def get_fee_price(self):
         '''
