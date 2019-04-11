@@ -11,7 +11,7 @@ def format_ret(t):
 def calc_tx_hash_for_sig(script_pub_key, tx, index):
     for i in range(len(tx.vin)):
         if i != index:
-            tx.vin[index].script_sig = None
+            tx.vin[index].script_sig = bytes()
         else:
             tx.vin[index].script_sig = script_pub_key
     return   format_ret(tx)

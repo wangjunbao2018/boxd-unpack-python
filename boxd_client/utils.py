@@ -9,7 +9,7 @@ def is_addr_valid(addr):
     if addr == None  or addr == "":
         return False
 
-    if len(addr) != 35  or  not addr.startswith("b1"):
+    if len(addr) != 35  or  (not addr.startswith("b1") and not addr.startswith("b2")):
         return False
 
     try:
@@ -29,4 +29,3 @@ def is_list(value):
 
 def is_number(value):
     return isinstance(value, integer_types) and not isinstance(value, bool)
-

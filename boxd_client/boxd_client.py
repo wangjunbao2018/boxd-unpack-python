@@ -295,8 +295,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        if not self.is_valid_addr(to):
-            raise ValueError("Not a valid addr of to")
+        # if not self.is_valid_addr(to):
+        #     raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -339,7 +339,7 @@ class BoxdClient(object):
         setattr(req, 'fee', fee)
         addrs = []
         weights = []
-        for k, v  in split_addr_info:
+        for k, v  in split_addr_info.items():
             addrs.append(k)
             weights.append(v)
         req.addrs.extend(addrs)
@@ -364,7 +364,7 @@ class BoxdClient(object):
         return self.tx_stub.MakeUnsignedTokenIssueTx(req)
 
 
-    def MakeUnsignedTokenTransferTx(self, _from, to, token_hash, token_index, fee):
+    def make_unsigned_token_transfer_transaction(self, _from, to, token_hash, token_index, fee):
         '''
         Use rpc api to create unsigned transaction to transfer a token
 
@@ -378,8 +378,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        if not self.is_valid_addr(to):
-            raise ValueError("Not a valid addr of to")
+        # if not self.is_valid_addr(to):
+        #     raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -419,8 +419,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        if not self.is_valid_addr(to):
-            raise ValueError("Not a valid addr of to")
+        # if not self.is_valid_addr(to):
+        #     raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -440,13 +440,12 @@ class BoxdClient(object):
 
         # init vout
         to_value = 0
-        from op_code import Opcode
+        from .op_code import Opcode
         for k, v in to.items():
             to_value += v
 
             pkh = get_pub_key_hash(k)
             #pkbb = [ord(x) for x in pkh]
-            print (type(pkh))
             pkbb = [x for x in pkh]
 
             oc = Opcode()
@@ -483,7 +482,7 @@ class BoxdClient(object):
 
         return _u_tx
 
-    def sign_unsigned_transaction(self, tx, priv_key_hex):
+    def sign_unsigned_transaction(self, _tx, priv_key_hex, rawMsgs = None):
         '''
         Sign the unsigned transaction using private key which is in hex format
 
@@ -494,11 +493,14 @@ class BoxdClient(object):
         if priv_key_hex is None:
             raise ValueError("Private key input err")
 
-        for i in range(len(tx.vin)):
-            vin = tx.vin[i]
+        for i in range(len(_tx.vin)):
+            vin = _tx.vin[i]
             script_sig = vin.script_sig
 
-            rawMsg = calc_tx_hash_for_sig(script_sig, tx, i)
+            if rawMsgs:
+                rawMsg = rawMsgs[i]
+            else:
+                rawMsg = calc_tx_hash_for_sig(script_sig, _tx, i)
 
             # sig hash
             sigHash = bin_double_sha256(rawMsg)
@@ -509,7 +511,7 @@ class BoxdClient(object):
             #sbs = [ord(item) for item in sig_bytes_hex]
             sbs = [item for item in sig_bytes_hex]
 
-            from op_code import Opcode
+            from .op_code import Opcode
             oc = Opcode()
             oc.reset()
             oc.add_operand(sbs)
@@ -521,7 +523,7 @@ class BoxdClient(object):
             oc.reset()
 
             vin.script_sig = hex_to_bytes(bytes_to_hex(script_sig_signed))
-        return tx
+        return _tx
 
 
     def newaccount(self, password, path):
