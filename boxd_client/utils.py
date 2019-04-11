@@ -29,3 +29,6 @@ def is_list(value):
 
 def is_number(value):
     return isinstance(value, integer_types) and not isinstance(value, bool)
+
+def is_dict(value):
+    return isinstance(value, dict)

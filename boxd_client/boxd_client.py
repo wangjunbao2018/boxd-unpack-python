@@ -37,6 +37,7 @@ from .keystore import newaccount
 from .utils import is_list
 from .utils import is_str
 from .utils import is_number
+from .utils import is_dict
 from .utils import is_addr_valid as utils_is_addr_valid
 
 class BoxdClient(object):
@@ -271,7 +272,7 @@ class BoxdClient(object):
         :return:
         '''
         if not is_str(hash):
-            raise ValueError("Hash param error")
+            raise ValueError("Hash input error")
 
         #return self.tx_stub.GetRawTransaction(tx.GetRawTransactionRequest(hash = bytes.fromhex(hash)))
         raise NotImplementedError
@@ -295,8 +296,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        # if not self.is_valid_addr(to):
-        #     raise ValueError("Not a valid addr of to")
+        if not is_dict(to):
+            raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -327,6 +328,9 @@ class BoxdClient(object):
         '''
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
+
+        if not is_dict(split_addr_info):
+            raise ValueError("Split address info input error")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -359,6 +363,12 @@ class BoxdClient(object):
         :param fee:
         :return:
         '''
+        if not is_number(fee):
+            raise ValueError("fee must be a number")
+
+        if fee < 0 :
+            raise ValueError("fee must >= 0")
+
         token = tx.TokenTag(name = name, symbol = symbol, supply = supply, decimal = decimal)
         req = tx.MakeTokenIssueTxReq(issuer = issuer, issuee = issuee, tag = token, fee = fee)
         return self.tx_stub.MakeUnsignedTokenIssueTx(req)
@@ -378,8 +388,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        # if not self.is_valid_addr(to):
-        #     raise ValueError("Not a valid addr of to")
+        if not is_dict(to):
+            raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -419,8 +429,8 @@ class BoxdClient(object):
         if not self.is_valid_addr(_from):
             raise ValueError("Not a valid addr of from")
 
-        # if not self.is_valid_addr(to):
-        #     raise ValueError("Not a valid addr of to")
+        if not is_dict(to):
+            raise ValueError("Not a valid addr of to")
 
         if not is_number(fee):
             raise ValueError("fee must be a number")
@@ -611,6 +621,9 @@ class BoxdClient(object):
         :param pub_key:
         :return:
         '''
+        if pub_key is None:
+            raise ValueError("Public key is None")
+
         return get_addr(pub_key).decode()
 
 
