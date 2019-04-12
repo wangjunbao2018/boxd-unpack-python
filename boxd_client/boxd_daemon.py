@@ -15,7 +15,15 @@ class BoxdDaemon(threading.Thread):
         Boxd daemon class to listen and read new blocks
 
         :param box_client:
-        :param handler:
+        :param handler:  a function used to handle new blocks, which should accept a block \n
+
+                         e.g. \n\n
+
+                         <code>
+                         def block_handler(block):
+                            print (block.SerializeToString())
+                         </>
+
         '''
         self._web_stub = box_client.web_stub
         self._handler = handler
@@ -26,6 +34,18 @@ class BoxdDaemon(threading.Thread):
 
 
     def listen_and_read_new_block(self, handler):
+        '''
+        Do listen and read new blocks
+
+        :param handler:  a function used to handle new blocks, which should accept a block \n
+
+                         e.g. \n\n
+                         <code>
+                         def block_handler(block):
+                            print (block.SerializeToString())
+                         </>
+        :return:
+        '''
         blocks = self._web_stub.ListenAndReadNewBlock(web.ListenBlocksReq())
         try:
             for block in blocks:
