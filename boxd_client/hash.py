@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from hashlib import sha256
 from binascii import hexlify, unhexlify

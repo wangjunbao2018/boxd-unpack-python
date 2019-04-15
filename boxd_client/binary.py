@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 def uint16(b):
     return b[0] | b[1] << 8

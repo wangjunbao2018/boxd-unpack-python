@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from boxd_client.boxd_client import BoxdClient
 
