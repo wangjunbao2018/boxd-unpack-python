@@ -56,9 +56,9 @@ setup(
         "Python version sdk for boxd."
     ),
     long_description_markdown_filename='README.md',
-    author='https://github.com/wangjunbao2018',
+    author='JarvisWang',
     author_email='wangjunbao2018@gmail.com',
-    url='https://github.com/wangjunbao2018/boxd-sdk-python',
+    url='https://github.com/BOXFoundation/boxd-unpack-python',
     include_package_data=True,
     platforms=['MacOS X', 'Posix'],
     # install_requires=install_requires,
