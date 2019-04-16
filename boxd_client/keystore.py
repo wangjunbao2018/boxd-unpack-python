@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import hmac
+# import hmac
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -112,7 +112,9 @@ def dumpprivkey(keyfile_json, password):
     mac = m.hexdigest()
     expected_mac =  crypto['mac']
 
-    if not hmac.compare_digest(decode_hex("0x" + mac), decode_hex("0x" + expected_mac)):
+    # if not hmac.compare_digest(decode_hex("0x" + mac), decode_hex("0x" + expected_mac)):
+    #     raise ValueError("Passphrase may be error")
+    if mac != expected_mac:
         raise ValueError("Passphrase may be error")
 
     # Decrypt the ciphertext using the derived encryption key to get the

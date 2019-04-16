@@ -13,7 +13,6 @@ deps = {
         "grpcio",
         "grpcio-tools",
         "utilitybelt",
-        "hmac",
         "Crypto",
         "secp256k1",
     ],
@@ -51,7 +50,7 @@ install_requires = deps['boxd-client']
 setup(
     name='boxd-client',
     # *IMPORTANT*: Don't manually change the version here. Use the 'bumpversion' utility.
-    version='0.0.1',
+    version='0.1.0',
     description=(
         "Python version sdk for boxd."
     ),
