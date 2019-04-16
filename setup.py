@@ -15,6 +15,7 @@ deps = {
         "utilitybelt",
         "Crypto",
         "secp256k1",
+        "base58"
     ],
     'test': [
         "pytest>=3.6,<3.7",
@@ -50,7 +51,7 @@ install_requires = deps['boxd-client']
 setup(
     name='boxd-client',
     # *IMPORTANT*: Don't manually change the version here. Use the 'bumpversion' utility.
-    version='0.1.0',
+    version='0.2.0',
     description=(
         "Python version sdk for boxd."
     ),
