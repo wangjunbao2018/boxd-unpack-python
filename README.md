@@ -1,4 +1,7 @@
-# boxd-sdk-python
+# boxd-unpack-python
+
+A python SDK for ContentBox blockchain developers. It makes to contract with boxd more easier in Python.
+
 
 ## Installation
 
