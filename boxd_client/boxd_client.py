@@ -39,6 +39,9 @@ from .utils import is_str
 from .utils import is_number
 from .utils import is_dict
 from .utils import is_addr_valid as utils_is_addr_valid
+from boxd_client.json_utils import encode_json
+
+import logging
 
 class BoxdClient(object):
     '''
@@ -48,9 +51,9 @@ class BoxdClient(object):
     def __init__(self, host = "localhost", port=19111):
         self.channel = grpc.insecure_channel(":".join([host, str(port)]))
         self.tx_stub = tx_rpc.TransactionCommandStub(self.channel)
-        self.control_stub = control_rpc.ContorlCommandStub(self.channel);
-        self.web_stub = web_rpc.WebApiStub(self.channel);
-        self.faucet_stub = faucet_rpc.FaucetStub(self.channel);
+        self.control_stub = control_rpc.ContorlCommandStub(self.channel)
+        self.web_stub = web_rpc.WebApiStub(self.channel)
+        self.faucet_stub = faucet_rpc.FaucetStub(self.channel)
 
 
     #################################################################
@@ -555,8 +558,10 @@ class BoxdClient(object):
             raise ValueError("Path already exists")
 
         key_store_json = newaccount(password)
+
+        encoded_json = encode_json(key_store_json)
         with open(path, 'w') as outfile:
-            json.dump(key_store_json, outfile)
+            json.dump(encoded_json, outfile)
         return True
 
     def dumpkeystore(self, priv_key, passphrase, path):
@@ -584,10 +589,11 @@ class BoxdClient(object):
             raise ValueError("Path already exists")
 
         key_store_json = dump_key_store(passphrase, priv_key)
-        with open(path, 'w') as outfile:
-            json.dump(key_store_json, outfile)
-        return True
 
+        encoded_json = encode_json(key_store_json)
+        with open(path, 'w') as outfile:
+            json.dump(encoded_json, outfile)
+        return True
 
     def privkey_to_pubkey(self, priv_key):
         '''

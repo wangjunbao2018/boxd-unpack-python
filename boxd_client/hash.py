@@ -6,10 +6,10 @@ from utilitybelt import is_hex
 
 
 def hex_to_bytes(value):
-    return bytes.fromhex(value)
+    return unhexlify(value)
 
 def bytes_to_hex(value):
-    return  ''.join( [ "%02X" % x for x in value ] ).strip()
+    return hexlify(value)
 
 def bin_sha256(bin_s):
     return sha256(bin_s).digest()

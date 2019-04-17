@@ -23,7 +23,7 @@ if os.path.exists(new_account_path):
 boxd.newaccount(password, new_account_path)
 
 
-priv_key_hex = boxd.dumpprivkey(new_account_path, "1")
+priv_key_hex = boxd.dumpprivkey(new_account_path, password)
 print (priv_key_hex)
 
 addr = boxd.privkey_to_addr(priv_key_hex)

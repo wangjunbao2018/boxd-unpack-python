@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+
 from secp256k1 import PrivateKey
 import binascii, hashlib, base58
 
@@ -11,7 +13,10 @@ def format_ret(t):
 def calc_tx_hash_for_sig(script_pub_key, tx, index):
     for i in range(len(tx.vin)):
         if i != index:
-            tx.vin[index].script_sig = bytes()
+            if sys.version_info[0] >= 3:
+                tx.vin[index].script_sig = bytes()
+            else:
+                tx.vin[index].script_sig = None
         else:
             tx.vin[index].script_sig = script_pub_key
     return   format_ret(tx)

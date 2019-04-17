@@ -8,22 +8,15 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import scrypt
 from Crypto.Util import Counter
 
-from eth_utils import (
-    big_endian_to_int,
-    decode_hex,
-    encode_hex,
-    int_to_big_endian,
-    is_dict,
-    is_string,
-    keccak,
-    remove_0x_prefix,
-    to_dict,
-)
 from secp256k1 import PrivateKey
 import binascii, hashlib, base58
 
-def encode_hex_no_prefix(value):
-    return remove_0x_prefix(encode_hex(value))
+from .hash import bytes_to_hex
+from .hash import hex_to_bytes
+
+from .utils import remove_0x_prefix
+from .utils import int_to_big_endian
+from .utils import big_endian_to_int
 
 def create_keyfile_json(private_key, password):
     if version == 3:
@@ -42,7 +35,7 @@ def ripemd160(x):
     return d
 
 def get_pub_key(priv_hex):
-    privKey = PrivateKey(bytes(bytearray.fromhex(priv_hex)), raw = True)
+    privKey = PrivateKey(hex_to_bytes(priv_hex), raw = True)
     pub_key = privKey.pubkey
     return pub_key.serialize()
 
@@ -69,7 +62,7 @@ def dumpkeystore(password, priv_key):
 
     iv = big_endian_to_int(Random.get_random_bytes(16))
 
-    ciphertext = encrypt_aes_ctr(decode_hex(priv_key), encrypt_key, iv)
+    ciphertext = encrypt_aes_ctr(hex_to_bytes(priv_key), encrypt_key, iv)
 
     import hashlib
     m = hashlib.sha256()
@@ -83,14 +76,14 @@ def dumpkeystore(password, priv_key):
         "id":"",
         "address": addr.decode(),
         "crypto":{
-            "ciphertext": encode_hex_no_prefix(ciphertext),
+            "ciphertext": bytes_to_hex(ciphertext),
             "cipher":"aes-128-ctr",
             "cipherparams":{
-                "iv": encode_hex_no_prefix(int_to_big_endian(iv))
+                "iv": bytes_to_hex(int_to_big_endian(iv))
             },
             "mac": mac,
             "kdfparams":{
-                "salt": encode_hex_no_prefix(salt),
+                "salt": bytes_to_hex(salt),
                 "dklen": DKLEN,
                 "n": N,
                 "r": SCRYPT_R,
@@ -103,7 +96,7 @@ def dumpkeystore(password, priv_key):
 def dumpprivkey(keyfile_json, password):
     crypto = keyfile_json['crypto']
     derived_key = _derive_scrypt_key(crypto, password)
-    ciphertext = decode_hex(crypto['ciphertext'])
+    ciphertext = hex_to_bytes(crypto['ciphertext'])
 
     import hashlib
     m = hashlib.sha256()
@@ -122,13 +115,13 @@ def dumpprivkey(keyfile_json, password):
     encrypt_key = derived_key[:16]
 
     cipherparams = crypto['cipherparams']
-    iv = big_endian_to_int(decode_hex(cipherparams['iv']))
+    iv = big_endian_to_int(hex_to_bytes(cipherparams['iv']))
     private_key = decrypt_aes_ctr(ciphertext, encrypt_key, iv)
-    return remove_0x_prefix(encode_hex(private_key))
+    return bytes_to_hex(private_key)
 
 def _derive_scrypt_key(crypto, password):
     kdf_params = crypto['kdfparams']
-    salt = decode_hex(kdf_params['salt'])
+    salt = hex_to_bytes(kdf_params['salt'])
     p = kdf_params['p']
     r = kdf_params['r']
     n = kdf_params['n']
