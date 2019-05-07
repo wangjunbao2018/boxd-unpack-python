@@ -14,9 +14,6 @@ else
 	fi
 fi	
 
-
-
-
 # get proto files 
 python parse_proto.py  $1
 

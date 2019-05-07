@@ -25,7 +25,7 @@ tx = boxd.sign_transaction(split_tx.tx, priv_key_hex=priv_key_hex, rawMsgs=split
 hash = boxd.send_transaction(tx)
 print(hash)
 
-tx_detail_resp = boxd.view_tx_detail(hash=hash)
+tx_detail_resp = boxd.view_tx_detail(hash=hash.encode())
 print(tx_detail_resp)
 
 time.sleep(3)
@@ -37,5 +37,5 @@ hash = boxd.send_transaction(tx)
 
 time.sleep(3)
 
-tx_detail_resp = boxd.view_tx_detail(hash = hash)
+tx_detail_resp = boxd.view_tx_detail(hash = hash.encode())
 print(tx_detail_resp)
