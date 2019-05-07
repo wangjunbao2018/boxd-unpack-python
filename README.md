@@ -1,7 +1,6 @@
 # boxd-unpack-python
 
-A python SDK for ContentBox blockchain developers. It makes to contract with boxd more easier in Python.
-
+Boxd-unpack-python is a python library for working with integrating with clients(Boxd Rpc Node) on the Boxd network.
 
 ## Installation
 
