@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 def uint16(b):
     return b[0] | b[1] << 8
 
@@ -10,7 +11,7 @@ def put_uint16(uint16):
 
 
 def uint32(b):
-    return b[0] | b[1] << 8 | b[2] << 16 | b[3] << 24;
+    return b[0] | b[1] << 8 | b[2] << 16 | b[3] << 24
 
 
 def put_uint32(uint32):

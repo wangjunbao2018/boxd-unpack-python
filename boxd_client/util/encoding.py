@@ -4,6 +4,7 @@
 import codecs
 from binascii import unhexlify
 
+
 def int_to_big_endian(val):
     # one (1) hex digit per four (4) bits
     width = val.bit_length()
@@ -19,6 +20,7 @@ def int_to_big_endian(val):
     s = unhexlify(fmt % val)
     return s
 
+
 def int_to_little_endian(val):
     width = val.bit_length()
     width += 8 - ((width % 8) or 8)
@@ -28,6 +30,7 @@ def int_to_little_endian(val):
     # see http://stackoverflow.com/a/931095/309233
     s = s[::-1]
     return s
+
 
 def big_endian_to_int(value):
     return int(codecs.encode(value, 'hex'), 16)

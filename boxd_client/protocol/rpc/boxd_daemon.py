@@ -32,13 +32,11 @@ class BoxdDaemon(threading.Thread):
         self._web_stub = box_client.web_stub
         threading.Thread.__init__(self)
 
-
     def set_block_listener(self, handler):
         self._handler.append(handler)
 
     def run(self):
         self.listen_and_read_new_block(handlers = self._handler)
-
 
     def listen_and_read_new_block(self, handlers):
         '''

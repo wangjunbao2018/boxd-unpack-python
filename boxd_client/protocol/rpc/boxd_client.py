@@ -30,7 +30,7 @@ from boxd_client.crypto.signutils import (
     get_pub_key
 )
 
-from boxd_client.util.utils import (
+from boxd_client.util.types import (
     is_list,
     is_number,
     is_dict,
@@ -49,6 +49,7 @@ from boxd_client.exception.exceptions import (
     BoxdError
 )
 
+
 def format_json(j):
     ciphertext = j["crypto"]["ciphertext"]
     if is_bytes(ciphertext):
@@ -61,6 +62,7 @@ def format_json(j):
     salt = j["crypto"]["kdfparams"]["salt"]
     j["crypto"]["kdfparams"]["salt"] = salt.decode()
     return j
+
 
 class BoxdClient(object):
     '''
@@ -93,7 +95,6 @@ class BoxdClient(object):
             return MessageToJson(resp.block)
         else:
             raise BoxdError(resp.message)
-
 
     def get_block_hash(self, block_height):
         '''
@@ -219,7 +220,6 @@ class BoxdClient(object):
         else:
             raise BoxdError(resp.message)
 
-
     def view_block_detail(self, hash):
         '''
         Get block info by the given block hash
@@ -270,7 +270,6 @@ class BoxdClient(object):
             return ret
         else:
             raise BoxdError(resp.message)
-
 
     def get_token_balance(self, addrs, token_hash, token_index):
         '''
@@ -460,7 +459,6 @@ class BoxdClient(object):
         req = tx.MakeTokenIssueTxReq(issuer = issuer, owner = owner, tag = token, fee = fee)
         return self.tx_stub.MakeUnsignedTokenIssueTx(req)
 
-
     def make_unsigned_token_transfer_tx(self, _from, to, token_hash, token_index, fee):
         '''
         Use rpc api to create unsigned transaction to transfer a token
@@ -498,7 +496,6 @@ class BoxdClient(object):
         setattr(req, 'token_hash', token_hash)
         setattr(req, 'token_index', token_index)
         return self.tx_stub.MakeUnsignedTokenTransferTx(req)
-
 
     #################################################################
     ####   utils related api
@@ -633,3 +630,4 @@ class BoxdClient(object):
             else:
                 vin.script_sig = hex_to_bytes(bytes_to_hex(script_sig_signed))
         return unsigned_tx
+

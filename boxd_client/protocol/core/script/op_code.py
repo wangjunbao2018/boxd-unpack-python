@@ -9,27 +9,27 @@ class Opcode(object):
     op_code enum and operators
     '''
     
-    OP0 = 0x00;         # 0
-    OPPUSHDATA1 = 0x4c; # 76
-    OPPUSHDATA2 = 0x4d; # 77
-    OPPUSHDATA4 = 0x4e; # 78
+    OP0 = 0x00          # 0
+    OPPUSHDATA1 = 0x4c  # 76
+    OPPUSHDATA2 = 0x4d  # 77
+    OPPUSHDATA4 = 0x4e  # 78
 
-    OPDUP          = 0x76; # 118
-    OPHASH160      = 0xa9; # 169
-    OPEQUALVERIFY  = 0x88; # 136
-    OPCHECKSIG     = 0xac; # 172
+    OPDUP          = 0x76  # 118
+    OPHASH160      = 0xa9  # 169
+    OPEQUALVERIFY  = 0x88  # 136
+    OPCHECKSIG     = 0xac  # 172
 
     def __init__(self):
         self._r = []
-        self.OP0 = 0x00;         # 0
-        self.OPPUSHDATA1 = 0x4c; # 76
-        self.OPPUSHDATA2 = 0x4d; # 77
-        self.OPPUSHDATA4 = 0x4e; # 78
+        self.OP0 = 0x00          # 0
+        self.OPPUSHDATA1 = 0x4c  # 76
+        self.OPPUSHDATA2 = 0x4d  # 77
+        self.OPPUSHDATA4 = 0x4e  # 78
 
-        self.OPDUP          = 0x76; # 118
-        self.OPHASH160      = 0xa9; # 169
-        self.OPEQUALVERIFY  = 0x88; # 136
-        self.OPCHECKSIG     = 0xac; # 172
+        self.OPDUP          = 0x76  # 118
+        self.OPHASH160      = 0xa9  # 169
+        self.OPEQUALVERIFY  = 0x88  # 136
+        self.OPCHECKSIG     = 0xac  # 172
         pass
 
     def add_opcode(self, b):

@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-import sys
 import six
 
 from secp256k1 import PrivateKey
 import binascii, hashlib, base58
 from boxd_client.util.hexadecimal import hex_to_bytes
+from boxd_client.crypto.hash import ripemd160
+
 
 def format_ret(t):
     ser = t.SerializeToString()
     return ser
+
 
 def calc_tx_hash_for_sig(script_pub_key, tx, index):
     for i in range(len(tx.vin)):
@@ -32,23 +33,21 @@ def get_pub_key_hash(addr):
         return None
     return pkh[2:]
 
+
 def get_pub_key(priv_hex):
     privKey = PrivateKey(hex_to_bytes(priv_hex), raw = True)
     pub_key = privKey.pubkey
     return pub_key.serialize()
 
-def ripemd160(x):
-    d = hashlib.new('ripemd160')
-    d.update(x)
-    return d
 
 def get_addr(pubkey):
     publ_key = binascii.hexlify(pubkey).decode()
-    hash160 = ripemd160(hashlib.sha256(binascii.unhexlify(publ_key)).digest()).digest()
+    hash160 = ripemd160(hashlib.sha256(binascii.unhexlify(publ_key)).digest())
     publ_addr_a = b"\x13\x26" + hash160
     checksum = hashlib.sha256(hashlib.sha256(publ_addr_a).digest()).digest()[:4]
     publ_addr_b = base58.b58encode(publ_addr_a + checksum)
     return publ_addr_b
+
 
 def sign(priv_hex, msg_hex):
     privKey = PrivateKey(hex_to_bytes(priv_hex), raw = True)

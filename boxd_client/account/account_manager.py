@@ -7,15 +7,19 @@ from __future__ import absolute_import
 import os
 import json
 
-from boxd_client.crypto.keystore import dumpprivkey as dump_priv_key, \
-    dumpkeystore as dump_key_store, \
-    get_addr, \
-    get_pub_key as kgpk, \
+from boxd_client.crypto.keystore import (
+    dumpprivkey as dump_priv_key,
+    dumpkeystore as dump_key_store,
+    get_addr,
+    get_pub_key as kgpk,
     newaccount
+)
 
-from boxd_client.crypto.signutils import get_pub_key_hash as get_pubkeyhash_from_addr
+from boxd_client.crypto.signutils import (
+    get_pub_key_hash as get_pubkeyhash_from_addr
+)
 
-from boxd_client.util.utils import is_bytes
+from boxd_client.util.types import is_bytes
 from boxd_client.exception.exceptions import ValidationError
 
 
@@ -29,7 +33,7 @@ def format_json(j):
         j["crypto"]["cipherparams"]["iv"] = iv.decode()
 
     salt = j["crypto"]["kdfparams"]["salt"]
-    j["crypto"]["kdfparams"]["salt"] = salt.decode()
+    j["crypto"]["kdfparams"]["salt"] = salt
 
     return j
 
@@ -38,6 +42,9 @@ class AccountManager():
     '''
     Account manager class.
     '''
+
+    def __init__(self):
+        pass
 
     @staticmethod
     def dump_keytore_from_privkey(priv_key, passphrase, path):
@@ -101,7 +108,6 @@ class AccountManager():
 
         keyfile_json = load_keyfile(file)
         return dump_priv_key(keyfile_json, passphrase)
-
 
     @staticmethod
     def dump_addr_from_privkey(priv_key):

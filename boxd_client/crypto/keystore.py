@@ -13,30 +13,31 @@ import binascii, hashlib, base58
 
 from boxd_client.util.encoding import int_to_big_endian, big_endian_to_int
 from boxd_client.util.hexadecimal import bytes_to_hex, hex_to_bytes
+from boxd_client.crypto.hash import ripemd160
+
+from boxd_client.exception.exceptions import ValidationError
 
 DKLEN = 32
 SCRYPT_R = 1
 SCRYPT_P = 8
 N = 262144
 
-def ripemd160(x):
-    d = hashlib.new('ripemd160')
-    d.update(x)
-    return d
 
 def get_pub_key(priv_hex):
     privKey = PrivateKey(hex_to_bytes(priv_hex), raw = True)
     pub_key = privKey.pubkey
     return pub_key.serialize()
 
+
 def get_addr(pubkey):
     publ_key = binascii.hexlify(pubkey).decode()
-    hash160 = ripemd160(hashlib.sha256(binascii.unhexlify(publ_key)).digest()).digest()
+    hash160 = ripemd160(hashlib.sha256(binascii.unhexlify(publ_key)).digest())
     publ_addr_a = b"\x13\x26" + hash160
 
     checksum = hashlib.sha256(hashlib.sha256(publ_addr_a).digest()).digest()[:4]
     publ_addr_b = base58.b58encode(publ_addr_a + checksum)
     return publ_addr_b
+
 
 def newaccount(password):
     private_key = binascii.hexlify(os.urandom(32)).decode()
@@ -83,6 +84,7 @@ def dumpkeystore(password, priv_key):
         "version":"0.1.0"
     }
 
+
 def dumpprivkey(keyfile_json, password):
     crypto = keyfile_json['crypto']
     derived_key = _derive_scrypt_key(crypto, password)
@@ -96,7 +98,7 @@ def dumpprivkey(keyfile_json, password):
     expected_mac =  crypto['mac']
 
     if mac != expected_mac:
-        raise ValueError("Passphrase may be error")
+        raise ValidationError("Passphrase may be error")
 
     # Decrypt the ciphertext using the derived encryption key to get the
     # private key.
@@ -106,6 +108,7 @@ def dumpprivkey(keyfile_json, password):
     iv = big_endian_to_int(hex_to_bytes(cipherparams['iv']))
     private_key = decrypt_aes_ctr(ciphertext, encrypt_key, iv)
     return bytes_to_hex(private_key)
+
 
 def _derive_scrypt_key(crypto, password):
     kdf_params = crypto['kdfparams']
@@ -125,6 +128,7 @@ def _derive_scrypt_key(crypto, password):
     )
     return derived_scrypt_key
 
+
 def _scrypt_hash(password, salt, n, r, p, buflen):
     derived_key = scrypt(
         password,
@@ -137,10 +141,12 @@ def _scrypt_hash(password, salt, n, r, p, buflen):
     )
     return derived_key
 
+
 def decrypt_aes_ctr(ciphertext, key, iv):
     ctr = Counter.new(128, initial_value=iv, allow_wraparound=True)
     encryptor = AES.new(key, AES.MODE_CTR, counter=ctr)
     return encryptor.decrypt(ciphertext)
+
 
 def encrypt_aes_ctr(value, key, iv):
     ctr = Counter.new(128, initial_value=iv, allow_wraparound=True)
