@@ -8,15 +8,12 @@ import os
 import json
 
 from boxd_client.crypto.keystore import (
-    dumpprivkey as dump_priv_key,
-    dumpkeystore as dump_key_store,
+    to_privkey as dump_priv_key,
+    to_keystore as dump_key_store,
     get_addr,
     get_pub_key as kgpk,
+    get_pub_key_hash as get_pubkeyhash_from_addr,
     newaccount
-)
-
-from boxd_client.crypto.signutils import (
-    get_pub_key_hash as get_pubkeyhash_from_addr
 )
 
 from boxd_client.util.types import is_bytes
@@ -38,10 +35,10 @@ def format_json(j):
     return j
 
 
-class AccountManager():
-    '''
+class AccountManager:
+    """
     Account manager class.
-    '''
+    """
 
     def __init__(self):
         pass

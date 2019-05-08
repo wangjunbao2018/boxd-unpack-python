@@ -24,11 +24,11 @@ from boxd_client.protocol.generated import (
 from boxd_client.crypto.hash import bin_double_sha256
 
 from boxd_client.crypto.signutils import (
-    get_pub_key_hash,
     calc_tx_hash_for_sig,
-    sign,
-    get_pub_key
+    sign
 )
+
+from boxd_client.crypto.keystore import get_pub_key, get_pub_key_hash
 
 from boxd_client.util.types import (
     is_list,
@@ -64,10 +64,10 @@ def format_json(j):
     return j
 
 
-class BoxdClient(object):
-    '''
-    Boxd client wrapper
-    '''
+class BoxdClient:
+    """
+    Boxd client wrapper.
+    """
 
     def __init__(self, host = "localhost", port=19111):
         self.channel = grpc.insecure_channel(":".join([host, str(port)]))
@@ -628,6 +628,8 @@ class BoxdClient(object):
             if sys.version_info[0] >= 3:
                 vin.script_sig = hex_to_bytes(bytes_to_hex(bytes(script_sig_signed)))
             else:
-                vin.script_sig = hex_to_bytes(bytes_to_hex(script_sig_signed))
+                vin.script_sig = hex_to_bytes(bytes_to_hex(bytes(script_sig_signed)))
         return unsigned_tx
+
+
 

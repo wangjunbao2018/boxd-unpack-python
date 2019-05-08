@@ -24,7 +24,7 @@ N = 262144
 
 
 def get_pub_key(priv_hex):
-    privKey = PrivateKey(hex_to_bytes(priv_hex), raw = True)
+    privKey = PrivateKey(hex_to_bytes(priv_hex), raw=True)
     pub_key = privKey.pubkey
     return pub_key.serialize()
 
@@ -39,12 +39,23 @@ def get_addr(pubkey):
     return publ_addr_b
 
 
+def get_pub_key_hash(addr):
+    if len(addr) != 35 or not addr.startswith("b1"):
+        return None
+    pkh = base58.b58decode_check(addr)
+    if len(pkh) != 22:
+        return None
+    return pkh[2:]
+
+
 def newaccount(password):
     private_key = binascii.hexlify(os.urandom(32)).decode()
-    return dumpkeystore(password, private_key)
+    return to_keystore(password, private_key)
 
-
-def dumpkeystore(password, priv_key):
+#
+# Encode
+#
+def to_keystore(password, priv_key):
     salt = Random.get_random_bytes(32)
 
     derived_key = _scrypt_hash(password, salt=salt, buflen=DKLEN, r=SCRYPT_R, p=SCRYPT_P, n=N)
@@ -84,8 +95,10 @@ def dumpkeystore(password, priv_key):
         "version":"0.1.0"
     }
 
-
-def dumpprivkey(keyfile_json, password):
+#
+#  Decode
+#
+def to_privkey(keyfile_json, password):
     crypto = keyfile_json['crypto']
     derived_key = _derive_scrypt_key(crypto, password)
     ciphertext = hex_to_bytes(crypto['ciphertext'])
@@ -110,6 +123,9 @@ def dumpprivkey(keyfile_json, password):
     return bytes_to_hex(private_key)
 
 
+#
+# Key derivation
+#
 def _derive_scrypt_key(crypto, password):
     kdf_params = crypto['kdfparams']
     salt = hex_to_bytes(kdf_params['salt'])
@@ -142,6 +158,9 @@ def _scrypt_hash(password, salt, n, r, p, buflen):
     return derived_key
 
 
+#
+# Encryption and Decryption
+#
 def decrypt_aes_ctr(ciphertext, key, iv):
     ctr = Counter.new(128, initial_value=iv, allow_wraparound=True)
     encryptor = AES.new(key, AES.MODE_CTR, counter=ctr)
