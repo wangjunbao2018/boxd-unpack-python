@@ -15,20 +15,20 @@ if __name__ == "__main__":
     boxd = BoxdClient("39.97.169.1", 19111)
 
     # get_block_height
-    height_resp = boxd.get_block_height()
-    height = height_resp.height
+    height = boxd.get_block_height()
+    height = height
     print (height)
 
     # get_block_hash
-    hash_resp = boxd.get_block_hash(height)
-    hash = hash_resp.hash
+    hash = boxd.get_block_hash(height)
+    print (hash)
 
     # get_block_header
-    header_resp = boxd.get_block_header(hash.encode())
+    header_resp = boxd.get_block_header(hash)
     print(header_resp)
 
     # get_block
-    block = boxd.get_block(hash.encode())
+    block = boxd.get_block(hash)
     print(block)
 
     # get_network_id
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print (balance)
 
     # fetch_utxo
-    utxos = boxd.fetch_utxos(addr, 100000000000, None, 0)
+    utxos = boxd.fetch_utxos(addr, 100, None, 0)
     print (utxos)
 
     # get_fee_price
@@ -65,9 +65,7 @@ if __name__ == "__main__":
     # print (raw_tx)
 
     # faucet
-    faucet_resp  =boxd.faucet(addr = addr, amount = 100)
-    tx_hash = faucet_resp.hash
-    print(faucet_resp)
+    tx_hash =boxd.faucet(addr=addr, amount=100)
     print(tx_hash)
 
     tx_detail_resp = boxd.view_tx_detail(hash = tx_hash.encode())

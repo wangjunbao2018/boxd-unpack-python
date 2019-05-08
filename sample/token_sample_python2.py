@@ -25,7 +25,7 @@ print("\n\n============issue token===========")
 print(hash)
 time.sleep(3)
 
-tx_detail_resp = boxd.view_tx_detail(hash=hash.encode())
+tx_detail_resp = boxd.view_tx_detail(hash=hash)
 print (tx_detail_resp)
 
 time.sleep(3)
@@ -40,5 +40,5 @@ print(hash)
 time.sleep(3)
 
 print(hash)
-tx_detail_resp = boxd.view_tx_detail(hash = hash.encode())
+tx_detail_resp = boxd.view_tx_detail(hash = hash)
 print(tx_detail_resp)

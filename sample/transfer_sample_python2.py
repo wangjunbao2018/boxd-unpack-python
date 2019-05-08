@@ -26,5 +26,5 @@ print(hash, type(hash))
 
 time.sleep(1)
 
-tx_detail = boxd.view_tx_detail(hash.encode(), False)
+tx_detail = boxd.view_tx_detail(hash, False)
 print (tx_detail)

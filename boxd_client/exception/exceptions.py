@@ -2,13 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-class ValidationError(Exception):
-    """
-    Raised when something does not pass a validation check
-    """
-    pass
-
-
 class BoxdError(Exception):
     """
     Raised when something wrong when send requests to rpc node
@@ -16,3 +9,15 @@ class BoxdError(Exception):
     pass
 
 
+class ValidationError(BoxdError):
+    """
+    Raised when something does not pass a validation check
+    """
+    pass
+
+
+class InsufficientBalanceError(BoxdError):
+    """
+    Raised when the balance is insufficient for transfering
+    """
+    pass

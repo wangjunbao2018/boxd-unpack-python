@@ -45,8 +45,9 @@ from boxd_client.util.hexadecimal import (
 )
 
 from boxd_client.exception.exceptions import (
+    BoxdError,
     ValidationError,
-    BoxdError
+    InsufficientBalanceError
 )
 
 
@@ -108,7 +109,7 @@ class BoxdClient:
 
         resp =  self.control_stub.GetBlockHash(control.GetBlockHashRequest(height= block_height))
         if resp.code == 0:
-            return resp.hash
+            return resp.hash.encode()
         else:
             raise BoxdError(resp.message)
 
@@ -194,10 +195,14 @@ class BoxdClient:
         if not is_number(amount):
             raise ValidationError("Amount must be a number")
 
-        if  amount <= 0:
+        if amount <= 0:
             raise ValidationError("Amount should > 0")
 
-        return self.faucet_stub.Claim(_faucet.ClaimReq(addr = addr, amount = amount))
+        resp = self.faucet_stub.Claim(_faucet.ClaimReq(addr = addr, amount = amount))
+        if resp.code == 0:
+            return resp.hash.encode()
+        else:
+            raise BoxdError(resp.message)
 
 
     #################################################################
@@ -332,16 +337,17 @@ class BoxdClient:
             raise BoxdError(resp.message)
 
     def send_transaction(self, transaction):
-        '''
+        """
         Send transaction to the chain, it will come into the memory pool
 
-        :param _tx:
+        :param transaction:
         :return:
-        '''
-        req = tx.SendTransactionReq(tx = transaction)
+        """
+
+        req = tx.SendTransactionReq(tx=transaction)
         resp = self.tx_stub.SendTransaction(req)
-        if(resp.code == 0):
-            return resp.hash
+        if resp.code == 0:
+            return resp.hash.encode()
         else:
             raise BoxdError(resp.message)
 
@@ -558,7 +564,9 @@ class BoxdClient:
             _u_tx.vout.extend([vout])
 
         # init charge, if not, all the balance more than amount will be fee
-        if total_utxo - to_value - fee > 0:
+        if total_utxo - to_value - fee < 0:
+            raise InsufficientBalanceError("Insufficient balance")
+        elif total_utxo - to_value - fee > 0:
             oc = Opcode()
             oc.add_opcode(oc.OPDUP)
             oc.add_opcode(oc.OPHASH160)
@@ -582,13 +590,14 @@ class BoxdClient:
         return _u_tx
 
     def sign_transaction(self, unsigned_tx, priv_key_hex, rawMsgs = None):
-        '''
+        """
         Sign the unsigned transaction using private key which is in hex format
 
-        :param tx: unsigned transaction
-        :param priv_key_hex:  private key in hex format
+        :param unsigned_tx:
+        :param priv_key_hex:
+        :param rawMsgs:
         :return:
-        '''
+        """
         if priv_key_hex is None:
             raise ValidationError("Private key input err")
 
@@ -604,7 +613,6 @@ class BoxdClient:
             # sig hash
             sigHash = bin_double_sha256(rawMsg)
 
-            # sign
             sig_bytes_hex = sign(priv_key_hex, bytes_to_hex(sigHash))
 
             if sys.version_info[0] >= 3:
@@ -628,7 +636,8 @@ class BoxdClient:
             if sys.version_info[0] >= 3:
                 vin.script_sig = hex_to_bytes(bytes_to_hex(bytes(script_sig_signed)))
             else:
-                vin.script_sig = hex_to_bytes(bytes_to_hex(bytes(script_sig_signed)))
+                script_sig_signed = "".join([chr(x) for x in script_sig_signed])
+                vin.script_sig = hex_to_bytes(bytes_to_hex(script_sig_signed))
         return unsigned_tx
 
 
