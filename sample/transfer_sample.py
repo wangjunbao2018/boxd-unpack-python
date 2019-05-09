@@ -19,12 +19,23 @@ to["b1Vc6vBWzjSp71c3c49hx3pENPL1TwU1Exy"] = 400
 boxd.faucet(addr, amount)
 time.sleep(3)
 
-unsigned_tx = boxd.make_unsigned_tx(addr, to, fee)
-signed_tx = boxd.sign_transaction(unsigned_tx.tx, priv_key_hex, unsigned_tx.rawMsgs)
-hash = boxd.send_transaction(signed_tx)
-print(hash, type(hash))
 
-time.sleep(1)
+def view_tx(hash):
+    tx_detail = boxd.view_tx_detail(hash, False)
+    print(tx_detail)
 
-tx_detail = boxd.view_tx_detail(hash, False)
-print (tx_detail)
+
+def transfer(addr, to, fee, priv_key_hex):
+    unsigned_tx = boxd.make_unsigned_tx(addr, to, fee)
+    signed_tx = boxd.sign_transaction(unsigned_tx.tx, priv_key_hex, unsigned_tx.rawMsgs)
+    hash = boxd.send_transaction(signed_tx)
+    return hash
+
+
+if __name__ == "__main__":
+
+    hash = transfer(addr, to, fee, priv_key_hex)
+    print(hash, type(hash))
+
+    view_tx(hash)
+
