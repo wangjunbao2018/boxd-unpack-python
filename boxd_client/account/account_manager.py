@@ -16,6 +16,7 @@ from boxd_client.crypto.keystore import (
     newaccount
 )
 
+from boxd_client.util.hexadecimal import bytes_to_hex
 from boxd_client.util.types import is_bytes
 from boxd_client.exception.exceptions import ValidationError
 
@@ -43,16 +44,19 @@ class AccountManager:
     def __init__(self):
         pass
 
-    @staticmethod
-    def dump_keytore_from_privkey(priv_key, passphrase, path):
-        '''
-        Dump keystore from private key
+    def dump_keytore_from_privkey(self, priv_key, passphrase, path):
+        """
+        Generate a keystore file based on privkey
 
         :param priv_key:    private key in hex format
         :param passphrase:  password to generate keystore
         :param path:        keystore store path
+        :param priv_key:
+        :param passphrase:
+        :param path:
         :return:
-        '''
+        """
+
         if priv_key is None:
             raise ValidationError("Private key input err")
 
@@ -75,15 +79,14 @@ class AccountManager:
             json.dump(encoded_json, outfile)
         return True
 
-    @staticmethod
-    def dump_privkey_from_keystore(file, passphrase):
-        '''
-
+    def dump_privkey_from_keystore(self, file, passphrase):
+        """
+        Export privkey from a keystore file and given passphrase
 
         :param file:
         :param passphrase:
         :return:
-        '''
+        """
         if passphrase is None or passphrase == "":
             raise ValidationError("Passphrase is empty")
 
@@ -106,29 +109,58 @@ class AccountManager:
         keyfile_json = load_keyfile(file)
         return dump_priv_key(keyfile_json, passphrase)
 
-    @staticmethod
-    def dump_addr_from_privkey(priv_key):
+    def dump_addr_from_privkey(self, priv_key):
+        """
+        Export addr from privkey
+
+        :param priv_key:
+        :return:
+        """
+
         if priv_key is None:
             raise ValidationError("Private key input err")
         return get_addr(kgpk(priv_key)).decode()
 
-    @staticmethod
-    def dump_pubkeyhash_from_privkey(priv_key):
+    def dump_pubkeyhash_from_privkey(self, priv_key):
+        """
+        Export pubkey hash from privkey
+
+        :param priv_key:
+        :return:
+        """
+
         addr = get_addr(kgpk(priv_key)).decode()
-        return get_pubkeyhash_from_addr(addr)
+        return bytes_to_hex(get_pubkeyhash_from_addr(addr))
 
-    @staticmethod
-    def dump_pubkeyhash_from_addr(addr):
-        return get_pubkeyhash_from_addr(addr)
+    def dump_pubkeyhash_from_addr(self, addr):
+        """
+        Export pubkey hash from addr
 
-    @staticmethod
-    def dump_pubkey_from_privkey(priv_key):
+        :param addr:
+        :return:
+        """
+        return bytes_to_hex(get_pubkeyhash_from_addr(addr))
+
+    def dump_pubkey_from_privkey(self, priv_key):
+        """
+        Export pubkey from privkey
+
+        :param priv_key:
+        :return:
+        """
+
         if priv_key is None:
             raise ValidationError("Private key input err")
         return kgpk(priv_key)
 
-    @staticmethod
-    def new_account(passphrase, keystore_file_path):
+    def new_account(self, passphrase, keystore_file_path):
+        """
+        Create a new account. It will create a keystore according to the passphrase
+
+        :param passphrase:
+        :param keystore_file_path:
+        :return:
+        """
         if keystore_file_path is None:
             raise ValidationError("KeyStore file path input err")
 
