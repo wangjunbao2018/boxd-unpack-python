@@ -36,7 +36,7 @@ def get_addr(pubkey):
 
     checksum = hashlib.sha256(hashlib.sha256(publ_addr_a).digest()).digest()[:4]
     publ_addr_b = base58.b58encode(publ_addr_a + checksum)
-    return publ_addr_b
+    return publ_addr_b.encode()
 
 
 def get_pub_key_hash(addr):

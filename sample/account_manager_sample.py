@@ -1,44 +1,85 @@
 #!/usr/bin/env python
 
-#!/usr/bin/env python
-
 import os
+import sys
+
 from boxd_client.util.hexadecimal import bytes_to_hex
 
-from boxd_client.account.account_manager import AccountManager as boxd
-
-# priv_key_hex = "5ace780e4a6e17889a6b8697be6ba902936c148662cce65e6a3153431a1a77c1"
-priv_key_hex = "4fd7346602d5fae2404efca9a35ba2ba470fffed1672d52f8581845e424179be"
-print (priv_key_hex)
-
-addr  = boxd.dump_addr_from_privkey(priv_key_hex)
-print(addr)
-
-pubkey = boxd.dump_pubkey_from_privkey(priv_key_hex)
-print (bytes_to_hex(pubkey))
-
-pubkeyhash = boxd.dump_pubkeyhash_from_addr(addr)
-pubkeyhash2 = boxd.dump_pubkeyhash_from_privkey(priv_key_hex)
-print (bytes_to_hex(pubkeyhash))
-print (bytes_to_hex(pubkeyhash2))
+from boxd_client.account.account_manager import AccountManager
+boxd = AccountManager()
 
 
-print ("\n\n\n-----------------------------------------------")
-addr = "b1USvtdkLrXXtzTfz8R5tpicJYobDbwuqeT"
-password = "1"
-path = "import.keystore"
-if os.path.exists(path):
-    os.remove(path)
-boxd.dump_keytore_from_privkey(priv_key_hex, password, path)
-
-new_account_path = "demo.keystore"
-if os.path.exists(new_account_path):
-    os.remove(new_account_path)
-boxd.new_account(password, new_account_path)
+def new_account(passphrase, keystore_file_path):
+    if os.path.exists(keystore_file_path):
+        # os.remove(keystore_file_path)
+        pass
+    else:
+        boxd.new_account(passphrase, keystore_file_path)
 
 
-priv_key_hex = boxd.dump_privkey_from_keystore(new_account_path, password)
-print (priv_key_hex)
+def dump_privkey_from_keystore(file, passphrase):
+    return boxd.dump_privkey_from_keystore(file, passphrase)
 
-addr = boxd.dump_addr_from_privkey(priv_key_hex)
-print (addr)
+
+def dump_keytore_from_privkey(priv_key, passphrase, path):
+    if os.path.exists(path):
+        pass
+    else:
+        boxd.dump_keystore_from_privkey(priv_key, passphrase, path)
+
+
+def dump_pubkey_from_privkey(priv_key):
+    return bytes_to_hex(boxd.dump_pubkey_from_privkey(priv_key))
+
+
+def dump_addr_from_privkey(priv_key):
+    return boxd.dump_addr_from_privkey(priv_key)
+
+
+def dump_pubkeyhash_from_privkey(priv_key):
+    return boxd.dump_pubkeyhash_from_privkey(priv_key)
+
+
+def dump_pubkeyhash_from_addr(addr):
+    return boxd.dump_pubkeyhash_from_addr(addr)
+
+
+if __name__ == "__main__":
+    pass
+
+    passphrase = "1"
+    keystore_file_path = "new_account.keystore"
+
+    print("\n\n===================================new account      ===========================")
+    new_account(passphrase, keystore_file_path)
+
+    print("\n\n==========================dump_privkey_from_keystore===========================")
+    privkey = dump_privkey_from_keystore(keystore_file_path, passphrase)
+    print(privkey,  type(privkey))
+
+    print("\n\n==========================dump_keystore_from_privkey===========================")
+    new_keystore_path = "new_generated_keystore.keystore"
+    dump_keytore_from_privkey(privkey, passphrase, new_keystore_path)
+
+    print("\n\n===========================dump_privkey_from_keystore==========================")
+    privkey1 = dump_privkey_from_keystore(new_keystore_path, passphrase)
+    print(privkey)
+    print(privkey == privkey1)
+
+    print("\n\n============================dump_pubkey_from_privkey===========================")
+    pubkey = dump_pubkey_from_privkey(privkey)
+    print(pubkey, type(pubkey))
+
+    print("\n\n============================dump_addr_from_privkey=============================")
+    addr = dump_addr_from_privkey(privkey)
+    print(addr, type(addr))
+    print(addr)
+
+    print("\n\n=============================dump_pubkeyhash_from_privkey=======================")
+    pubkeyhash = dump_pubkeyhash_from_privkey(privkey)
+    print(pubkeyhash, type(pubkeyhash))
+
+
+    print("\n\n=============================dump_pubkeyhash_from_addr==========================")
+    pubkeyhash1 = dump_pubkeyhash_from_addr(addr)
+    print(pubkeyhash1, type(pubkeyhash1))
