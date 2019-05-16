@@ -28,4 +28,4 @@ touch boxd_client/protocol/generated/__init__.py
 
 
 # run cmd
-# sh build-python3.sh /Users/apple/workspace/box-hi/boxd
+# sh build-python3.sh /Users/apple/workspace/boxd

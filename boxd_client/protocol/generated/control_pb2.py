@@ -12,8 +12,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-from boxd_client.protocol.generated import block_pb2 as block__pb2
-from boxd_client.protocol.generated import common_pb2 as common__pb2
+import block_pb2 as block__pb2
+import common_pb2 as common__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
