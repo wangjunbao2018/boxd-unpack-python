@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import six
+
 
 from secp256k1 import PrivateKey
 from boxd_client.util.hexadecimal import hex_to_bytes
@@ -9,10 +9,7 @@ from boxd_client.util.hexadecimal import hex_to_bytes
 def calc_tx_hash_for_sig(script_pub_key, tx, index):
     for i in range(len(tx.vin)):
         if i != index:
-            if six.PY3:
-                tx.vin[index].script_sig = bytes()
-            else:
-                tx.vin[index].script_sig = None
+            tx.vin[index].script_sig = b''
         else:
             tx.vin[index].script_sig = script_pub_key
     return tx.SerializeToString()

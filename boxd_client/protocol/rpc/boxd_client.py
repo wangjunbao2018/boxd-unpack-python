@@ -7,7 +7,10 @@ from __future__ import absolute_import
 import sys
 import grpc
 
+import six
+
 from google.protobuf.json_format import MessageToJson
+from google.protobuf.json_format import MessageToDict
 
 from boxd_client.protocol.generated import (
     block_pb2 as block,
@@ -332,7 +335,22 @@ class BoxdClient:
 
         resp = self.tx_stub.FetchUtxos(tx.FetchUtxosReq(addr = addr, amount = amount, token_hash = token_hash, token_index = token_index))
         if resp.code == 0:
-            return MessageToJson(resp)
+            return resp.utxos
+        else:
+            raise BoxdError(resp.message)
+
+    def send_raw_transaction(self, transaction):
+        '''
+        Send raw transaction to the chain
+
+        :param transaction:
+        :return:
+        '''
+
+        req = tx.SendRawTransactionReq(tx=transaction)
+        resp = self.tx_stub.SendRawTransaction(req)
+        if resp.code == 0:
+            return resp.hash.encode()
         else:
             raise BoxdError(resp.message)
 
@@ -559,7 +577,11 @@ class BoxdClient:
             script_pk = oc.get_result()
             oc.reset()
 
-            script_pk_bytes = hex_to_bytes(bytes_to_hex(script_pk))
+            if six.PY3:
+                script_pk_bytes = hex_to_bytes(bytes_to_hex(bytes(script_pk)))
+            else:
+                script_pk = "".join([chr(x) for x in script_pk])
+                script_pk_bytes = hex_to_bytes(bytes_to_hex(script_pk))
             vout =  block.TxOut(value = v, script_pub_key = script_pk_bytes)
             _u_tx.vout.extend([vout])
 
@@ -571,7 +593,7 @@ class BoxdClient:
             oc.add_opcode(oc.OPDUP)
             oc.add_opcode(oc.OPHASH160)
 
-            pkh = get_pub_key_hash(k)
+            pkh = get_pub_key_hash(_from)
 
             if sys.version_info[0] >= 3:
                 pkbb = [x for x in pkh]
@@ -583,7 +605,12 @@ class BoxdClient:
             oc.add_opcode(Opcode.OPCHECKSIG)
             script_pk = oc.get_result()
             oc.reset()
-            script_pk_bytes = hex_to_bytes(bytes_to_hex(script_pk))
+
+            if six.PY3:
+                script_pk_bytes = hex_to_bytes(bytes_to_hex(bytes(script_pk)))
+            else:
+                script_pk = "".join([chr(x) for x in script_pk])
+                script_pk_bytes = hex_to_bytes(bytes_to_hex(script_pk))
             vout =  block.TxOut(value = total_utxo - to_value - fee, script_pub_key = script_pk_bytes)
             _u_tx.vout.extend([vout])
 
